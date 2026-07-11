@@ -1,0 +1,15 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /human_coding_sessions/{coderId} {
+      allow create, update, read: if request.auth != null
+        && request.resource.data.uid == request.auth.uid;
+
+      match /responses/{eventId} {
+        allow create, update, read: if request.auth != null
+          && request.resource.data.uid == request.auth.uid;
+      }
+    }
+  }
+}

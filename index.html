@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Benchmark Evolution 标注平台</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./firebase-config.js"></script>
+    <script src="./events.js"></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Human Coding</p>
+          <h1>Benchmark Evolution 标注平台</h1>
+        </div>
+        <div class="status-pill" id="syncStatus">未连接</div>
+      </header>
+
+      <section class="panel login-panel" id="loginPanel">
+        <div>
+          <h2>开始标注</h2>
+          <p>请输入你的标注者代号。平台只加载待标注事件，不包含作者答案。</p>
+        </div>
+        <div class="login-row">
+          <label for="coderId">标注者代号</label>
+          <input id="coderId" autocomplete="off" placeholder="例如 coder_A" />
+          <button id="startBtn">加载任务</button>
+        </div>
+        <p class="hint">
+          不要查看论文标签结论或 <code>_answer_key.csv</code>。标注依据只来自每条事件的公开来源。
+        </p>
+      </section>
+
+      <section class="workspace hidden" id="workspace">
+        <aside class="panel guide">
+          <h2>标签定义</h2>
+          <details open>
+            <summary>Driver：为什么演化？</summary>
+            <dl>
+              <dt>saturation</dt><dd>模型接近满分或原任务过易，需要更难版本。</dd>
+              <dt>oracle_quality</dt><dd>修复标注、oracle、验证器、歧义或 shortcut 等质量问题。</dd>
+              <dt>contamination</dt><dd>通过近期、动态或 live 数据降低污染/记忆风险。</dd>
+              <dt>capability_gap</dt><dd>旧 benchmark 缺少某类能力覆盖。</dd>
+              <dt>modality</dt><dd>主要新增图像、视频、音频、GUI 等模态。</dd>
+              <dt>domain</dt><dd>主要扩展到新的应用领域。</dd>
+              <dt>fragmented</dt><dd>主要整合分散 benchmark 或任务族。</dd>
+            </dl>
+          </details>
+          <details open>
+            <summary>Operator：做了什么？</summary>
+            <dl>
+              <dt>integrity_gate</dt><dd>清洗、验证、修复可靠性，不主要改变能力或难度轴。</dd>
+              <dt>harden</dt><dd>在同一能力方向上增加难度。</dd>
+              <dt>capability_expand</dt><dd>增加新的能力轴、任务形态、模态或应用场景。</dd>
+              <dt>freshness</dt><dd>用更新近或动态刷新的样本应对污染。</dd>
+              <dt>recombine</dt><dd>组合多个已有任务、数据集或能力线。</dd>
+            </dl>
+          </details>
+          <p class="hint">最常见分歧是 <code>harden</code> vs <code>capability_expand</code>。如果两者都合理，请选主要因素并在备注说明。</p>
+        </aside>
+
+        <section class="panel task-panel">
+          <div class="task-header">
+            <div>
+              <p class="eyebrow" id="eventFamily">family</p>
+              <h2 id="eventTitle">事件</h2>
+            </div>
+            <div class="progress-block">
+              <span id="progressText">0/0</span>
+              <progress id="progressBar" max="1" value="0"></progress>
+            </div>
+          </div>
+
+          <div class="event-grid">
+            <div>
+              <span>From</span>
+              <strong id="fromVersion">-</strong>
+            </div>
+            <div>
+              <span>To</span>
+              <strong id="toVersion">-</strong>
+            </div>
+            <div>
+              <span>Date</span>
+              <strong id="eventDate">-</strong>
+            </div>
+            <a id="sourceLink" href="#" target="_blank" rel="noopener noreferrer">打开公开来源</a>
+          </div>
+
+          <div class="facts-grid">
+            <div>
+              <span>Capability-axis change</span>
+              <strong id="capabilityChange">-</strong>
+            </div>
+            <div>
+              <span>Morphology change</span>
+              <strong id="morphologyChange">-</strong>
+            </div>
+            <div>
+              <span>Saturation / quality driver</span>
+              <strong id="saturationDriver">-</strong>
+            </div>
+          </div>
+
+          <p class="hint">
+            上面三项是原论文从公开记录整理出的客观事实字段，最终 operator 答案已隐藏。
+            请根据这些字段并打开来源核实后标注。
+          </p>
+
+          <div class="form-grid">
+            <label>
+              Driver（可选 broad driver）
+              <select id="driverSelect"></select>
+            </label>
+            <label>
+              Operator（核心必填）
+              <select id="operatorSelect"></select>
+            </label>
+          </div>
+
+          <label class="note-label">
+            Note
+            <textarea id="noteInput" rows="5" placeholder="可记录歧义、次要因素、来源打不开等情况。"></textarea>
+          </label>
+
+          <div class="actions">
+            <button id="prevBtn">上一条</button>
+            <button id="saveBtn">保存当前</button>
+            <button id="nextBtn" class="primary">保存并下一条</button>
+          </div>
+
+          <div class="jump-row">
+            <label for="jumpInput">跳转到第</label>
+            <input id="jumpInput" type="number" min="1" value="1" />
+            <button id="jumpBtn">保存并跳转</button>
+            <button id="downloadBtn">下载 CSV</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
