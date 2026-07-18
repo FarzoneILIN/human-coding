@@ -325,17 +325,17 @@ async function move(delta) {
 }
 
 async function jump() {
-  await saveCurrent();
   const target = Number.parseInt(el.jumpInput.value, 10);
   if (!Number.isFinite(target)) return;
+  await saveCurrent();
   currentIndex = clampIndex(target - 1);
   render();
 }
 
 async function jumpToSelectedEvent() {
-  await saveCurrent();
   const target = Number.parseInt(el.eventSelect.value, 10);
   if (!Number.isFinite(target)) return;
+  await saveCurrent();
   currentIndex = clampIndex(target);
   render();
 }
