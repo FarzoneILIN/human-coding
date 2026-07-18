@@ -71,6 +71,7 @@ const el = {
   nextBtn: document.getElementById("nextBtn"),
   jumpInput: document.getElementById("jumpInput"),
   jumpBtn: document.getElementById("jumpBtn"),
+  eventSelect: document.getElementById("eventSelect"),
   downloadBtn: document.getElementById("downloadBtn")
 };
 
@@ -86,6 +87,16 @@ function fillSelect(select, choices) {
     option.value = choice;
     option.textContent = choice || "请选择";
     select.appendChild(option);
+  });
+}
+
+function fillEventSelect() {
+  el.eventSelect.innerHTML = "";
+  events.forEach((event, index) => {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = `${index + 1}. ${event.event_id} - ${event.family}: ${event.from_version} -> ${event.to_version}`;
+    el.eventSelect.appendChild(option);
   });
 }
 
@@ -164,6 +175,7 @@ function render() {
   el.noteInput.value = response.note || "";
   el.jumpInput.max = String(events.length);
   el.jumpInput.value = String(currentIndex + 1);
+  el.eventSelect.value = String(currentIndex);
   el.progressText.textContent = `${completedCount()}/${events.length} 已填写；当前 ${currentIndex + 1}/${events.length}`;
   el.progressBar.max = events.length;
   el.progressBar.value = completedCount();
@@ -320,14 +332,24 @@ async function jump() {
   render();
 }
 
+async function jumpToSelectedEvent() {
+  await saveCurrent();
+  const target = Number.parseInt(el.eventSelect.value, 10);
+  if (!Number.isFinite(target)) return;
+  currentIndex = clampIndex(target);
+  render();
+}
+
 fillSelect(el.driverSelect, DRIVER_CHOICES);
 fillSelect(el.operatorSelect, OPERATOR_CHOICES);
+fillEventSelect();
 
 el.startBtn.addEventListener("click", start);
 el.saveBtn.addEventListener("click", saveCurrent);
 el.nextBtn.addEventListener("click", () => move(1));
 el.prevBtn.addEventListener("click", () => move(-1));
 el.jumpBtn.addEventListener("click", jump);
+el.eventSelect.addEventListener("change", jumpToSelectedEvent);
 el.downloadBtn.addEventListener("click", downloadCsv);
 
 if (!events.length) {

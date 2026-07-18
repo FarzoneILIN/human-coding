@@ -299,6 +299,10 @@ label {
   width: 110px;
 }
 
+.jump-row select {
+  width: min(520px, 100%);
+}
+
 code {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   background: #eef2f7;
